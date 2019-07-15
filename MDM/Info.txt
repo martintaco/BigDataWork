@@ -1,0 +1,4 @@
+en el mdminformation se tiene el programa listo para cargar en el EMR
+
+en el mdminformation local : se hacen las modificaciones y pruebas
+ desde el local para luego subirlas al emr o reemplazar los archivos del mdminformation
