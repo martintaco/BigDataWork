@@ -72,6 +72,17 @@ SELECT
 	AND det_dias_paises.seccion = (RTRIM(Days_Connected.zona) || RTRIM(Days_Connected.seccion))
 	ORDER BY 1,2,3,4,5,6,7;
 	
+	unload($$ select * from #Table1 $$)
+	to 's3://belc-bigdata-domain-dlk-prd/dom-hana/Res_Uso_consultora/Usabilidad_'
+	access_key_id '{ACCESS_KEY}'
+	secret_access_key '{SECRET_KEY}'
+	delimiter '\t'
+	NULL AS 'NULL'
+	ALLOWOVERWRITE
+	PARALLEL OFF
+	ESCAPE
+	ADDQUOTES
+	;
 	
 	DROP TABLE #RANK_CAMPANIA_PAIS;
 	DROP TABLE #CAMPANIA_PAIS;
