@@ -1,0 +1,1 @@
+Queries sin comentarion ni documentación de ningún tipo. Listas para ejecutar con el script execute_sql_script.py
