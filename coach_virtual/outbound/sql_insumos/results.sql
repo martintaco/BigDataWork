@@ -4,66 +4,68 @@ INTO #PaisCampanas_tmp
 FROM lan_virtual_coach.fdethybrysdata
 WHERE length(aniocampana_proceso) = 6;
 
- 
 
- 
+/*Se agrega un inner join para que se haga un mactch con la tabla de Campañas de facturación*/
 
 DROP TABLE IF EXISTS #PaisCampanas;
 SELECT DISTINCT country as codpais, aniocampana, '000000' AS ANIOCAMPANA_U6C, '000000' AS ANIOCAMPANA_U1C
 INTO #PaisCampanas
 FROM fnc_virtual_coach.fdethybrysdata a
+inner join fnc_analitico.ctr_cierre_generico c on a.country = c.cod_pais and a.aniocampana >= c.aniocampana
 WHERE EXISTS
              (      SELECT       *
                     FROM #PaisCampanas_tmp b
                     WHERE a.aniocampana = b.aniocampana_proceso
              )
-and length(codpais) = 2;
+and length(codpais) = 2
+and c.estado_sicc = '0'
+order by 1,2;
 
-unload ($$ 
-select 
+unload ($$
+select
 		p.codpais
 		,p.aniocampana
-		,p.codebelista		
-		,p.titulocontenido	
+		,p.codebelista
+		,p.titulocontenido
 		,p.mensajesenviados
 		,p.mensajesentregados
 		,p.mensajesabiertos
-		,p.clicsunicos			
+		,p.clicsunicos
 from dom_virtual_coach.mh_vc_consultora_template p
 inner join #PaisCampanas pc on pc.codpais = p.codpais and pc.aniocampana = p.aniocampana
 /*where flagcontrol = 0*/
-$$) 
-to 's3://belc-bigdata-landing-dlk-prd/datalake/output/hana-bi/virtual-coach/dlk_VC_consultora_template_' 
-access_key_id '{ACCESS_KEY}' 
-secret_access_key '{SECRET_KEY}' 
-delimiter '\t' 
---maxfilesize 250 mb 
+$$)
+to 's3://belc-bigdata-landing-dlk-prd/datalake/output/hana-bi/virtual-coach/dlk_VC_consultora_template_'
+access_key_id '{ACCESS_KEY}'
+secret_access_key '{SECRET_KEY}'
+delimiter '\t'
+--maxfilesize 250 mb
 parallel OFF
 ALLOWOVERWRITE
 ;
 
 
 
-unload ($$ 
-SELECT 
+unload ($$
+SELECT
 	 p.aniocampanaexpo
 	,p.codpais
 	,p.destitulo
 	,p.despublico
-	,p.destipo		
+	,p.destipo
 	,p.descategoria
 	,p.dessubcategoria
 	,p.descampania
 	,p.codcuc
-	,p.codventa	
+	,p.codventa
 FROM dom_virtual_coach.fdettemplates p
 inner join #PaisCampanas pc on pc.codpais = p.codpais and pc.aniocampana = p.aniocampanaexpo
-$$) 
-to 's3://belc-bigdata-landing-dlk-prd/datalake/output/hana-bi/virtual-coach/dlk_VC_template_' 
-access_key_id '{ACCESS_KEY}' 
-secret_access_key '{SECRET_KEY}' 
-delimiter '\t' 
---maxfilesize 250 mb 
+$$)
+to 's3://belc-bigdata-landing-dlk-prd/datalake/output/hana-bi/virtual-coach/dlk_VC_template_'
+access_key_id '{ACCESS_KEY}'
+secret_access_key '{SECRET_KEY}'
+delimiter '\t'
+--maxfilesize 250 mb
 parallel OFF
 ALLOWOVERWRITE
 ;
@@ -95,13 +97,13 @@ SELECT a.aniocampanaenvio
        , a.cantidadmensajesentregados
        , a.cantidadmensajesabiertos
        , a.cantidadmensajescliqueados
-  FROM 
+  FROM
   (  SELECT a.aniocampanaenvio
        , a.codpais
        , a.codebelista
        , a.descampaniamarketing
        , a.destitulocontenido
-       , CASE 
+       , CASE
          WHEN a.destitulocontenido LIKE '%NUEVA%' THEN 'Nueva'
          WHEN a.destitulocontenido LIKE '%EST%' THEN 'Establecida'
          ELSE 'Otros'
@@ -123,7 +125,7 @@ SELECT a.aniocampanaenvio
        , SUM(b.cantidadmensajesentregados) cantidadmensajesentregados
        , SUM(c.cantidadmensajesabiertos) cantidadmensajesabiertos
        , SUM(d.cantidadmensajescliqueados) cantidadmensajescliqueados
-  FROM 
+  FROM
   (SELECT a.aniocampana as aniocampanaenvio
        , country codpais
        , yy1_codigoebelista_mps codebelista
@@ -132,7 +134,7 @@ SELECT a.aniocampanaenvio
        , communicationmedium desmediocomunicacion
        , MIN(interactiontimestamputc) fechaenvio
        , SUM(numberofsentmessages) cantidadmensajesenviados
-  FROM fnc_virtual_coach.fdethybrysdata a      
+  FROM fnc_virtual_coach.fdethybrysdata a
   inner join #PaisCampanas pc on pc.codpais = a.country and pc.aniocampana = a.aniocampana
   WHERE numberofsentmessages > 0
   GROUP BY
@@ -152,7 +154,7 @@ SELECT a.aniocampanaenvio
 		       , communicationmedium desmediocomunicacion
 		       , MIN(interactiontimestamputc) fecharecepcion
 		       , SUM(numberofdeliveredmessages) cantidadmensajesentregados
-		  FROM fnc_virtual_coach.fdethybrysdata a  
+		  FROM fnc_virtual_coach.fdethybrysdata a
       inner join #PaisCampanas pc on pc.codpais = a.country and pc.aniocampana = a.aniocampana
 	    WHERE numberofdeliveredmessages > 0
       GROUP BY
@@ -178,7 +180,7 @@ SELECT a.aniocampanaenvio
 		       , communicationmedium desmediocomunicacion
 		       , MIN(interactiontimestamputc) fechaapertura
 		       , SUM(numberofopenedmessages) cantidadmensajesabiertos
-		  FROM fnc_virtual_coach.fdethybrysdata a      
+		  FROM fnc_virtual_coach.fdethybrysdata a
       inner join #PaisCampanas pc on pc.codpais = a.country and pc.aniocampana = a.aniocampana
 		  WHERE numberofopenedmessages > 0
       GROUP BY
@@ -189,7 +191,7 @@ SELECT a.aniocampanaenvio
 		       , interactioncontentsubject
 		       , communicationmedium
 		       ) c
-		       
+
 		       ON a.aniocampanaenvio = c.aniocampanaapertura
            AND a.codpais = c.codpais
 		       AND a.codebelista = c.codebelista
@@ -205,8 +207,8 @@ SELECT a.aniocampanaenvio
 		       , communicationmedium desmediocomunicacion
 		       , MIN(interactiontimestamputc) fechaclic
 		       , SUM(numberofuniqueclicks) cantidadmensajescliqueados
-		  FROM fnc_virtual_coach.fdethybrysdata a  
-      inner join #PaisCampanas pc on pc.codpais = a.country and pc.aniocampana = a.aniocampana    
+		  FROM fnc_virtual_coach.fdethybrysdata a
+      inner join #PaisCampanas pc on pc.codpais = a.country and pc.aniocampana = a.aniocampana
 	    WHERE numberofuniqueclicks > 0
       GROUP BY
 		       a.aniocampana
@@ -216,20 +218,20 @@ SELECT a.aniocampanaenvio
 		       , interactioncontentsubject
 		       , communicationmedium
 		       ) d
-		       
+
 		       ON a.aniocampanaenvio = d.aniocampanaclic
 		       AND a.codpais = d.codpais
 		       AND a.codebelista = d.codebelista
 		       AND a.descampaniamarketing = d.descampaniamarketing
 		       AND a.destitulocontenido = d.destitulocontenido
 		       AND a.desmediocomunicacion = d.desmediocomunicacion
-GROUP BY 
+GROUP BY
        a.aniocampanaenvio
        , a.codpais
        , a.codebelista
        , a.descampaniamarketing
        , a.destitulocontenido
-       , CASE 
+       , CASE
          WHEN a.destitulocontenido LIKE '%NUEVA%' THEN 'Nueva'
          WHEN a.destitulocontenido LIKE '%EST%' THEN 'Establecida'
          ELSE 'Otros'
@@ -247,15 +249,15 @@ GROUP BY
        , b.aniocampanarecepcion
        , c.aniocampanaapertura
        , d.aniocampanaclic
-) a 
+) a
     LEFT JOIN fnc_virtual_coach.fdettemplates b ON a.codpais = b.codpais AND a.descampaniamarketing = b.descampania AND a.destitulocontenido = b.destitulo AND a.aniocampanaenvio = b.aniocampanaexpo;
 unload ($$ select * from dom_virtual_coach.det_VC_consolidado
 where codpais||aniocampanaenvio in (select codpais||aniocampana from #PaisCampanas)
 $$)
-to 's3://belc-bigdata-landing-dlk-prd/datalake/output/hana-bi/virtual-coach/dlk_VC_consolidado_' 
-access_key_id '{ACCESS_KEY}' 
-secret_access_key '{SECRET_KEY}' 
+to 's3://belc-bigdata-landing-dlk-prd/datalake/output/hana-bi/virtual-coach/dlk_VC_consolidado_'
+access_key_id '{ACCESS_KEY}'
+secret_access_key '{SECRET_KEY}'
 delimiter '\t'
 --maxfilesize 250 mb
-parallel OFF 
+parallel OFF
 ALLOWOVERWRITE;

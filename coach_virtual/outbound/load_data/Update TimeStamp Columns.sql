@@ -43,3 +43,32 @@ from #consultoras_digit02
 where country = codcountry
 and yy1_codigoebelista_mps = codebelista2
 and campanaexposicion = aniocampanacorrect;
+
+-- Se realiza la actualización de la tabla Lan, para los codigos que se les aumento un "0" y no deben tener ese aumento. Ya que luego apareceran en la dwh_debelista
+
+drop table if exists #consultoras_digit03;
+select country as codcountry, campanaexposicion as aniocampanacorrect,yy1_codigoebelista_mps as codebelista2, case when substring(yy1_codigoebelista_mps,1,1) = 0 then substring(yy1_codigoebelista_mps,2,length(yy1_codigoebelista_mps)-1) else yy1_codigoebelista_mps end as codconsultora
+into #consultoras_digit03
+from(
+select distinct campanaexposicion,country,yy1_codigoebelista_mps from lan_virtual_coach.fdethybrysdata
+minus
+select distinct aniocampana, codpais, codebelista from fnc_analitico.dwh_fstaebecam
+WHERE aniocampana >= '201906');
+
+-- se compara la tabla digit03 con la ebelista para quitar los codigos que si existen solo que no aparecen en la fstaebecam
+drop table if exists #consultoras_digit04;
+select a.*
+into #consultoras_digit04
+from #consultoras_digit03 a
+left join fnc_analitico.dwh_debelista b on
+a.codcountry = b.codpais and
+a.codebelista2 = b.codebelista
+where b.codebelista is null;
+
+-- Se realiza la nueva actualizacion a la tabla temporal
+update lan_virtual_coach.fdethybrysdata
+set yy1_codigoebelista_mps = codconsultora
+from #consultoras_digit04
+where country = codcountry
+and yy1_codigoebelista_mps = codebelista2
+and campanaexposicion = aniocampanacorrect;

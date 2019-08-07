@@ -9,23 +9,26 @@ INTO #PaisCampanas_tmp
 FROM lan_virtual_coach.fdethybrysdata
 WHERE length(aniocampana_proceso) = 6;
 
- 
 
- 
+
+ /*Se agrega un inner join para que se haga un mactch con la tabla de Campañas de facturación*/
 
 DROP TABLE IF EXISTS #PaisCampanas;
 SELECT DISTINCT country as codpais, aniocampana, '000000' AS ANIOCAMPANA_U6C, '000000' AS ANIOCAMPANA_U1C
 INTO #PaisCampanas
 FROM fnc_virtual_coach.fdethybrysdata a
+inner join fnc_analitico.ctr_cierre_generico c on a.country = c.cod_pais and a.aniocampana >= c.aniocampana
 WHERE EXISTS
              (      SELECT       *
                     FROM #PaisCampanas_tmp b
                     WHERE a.aniocampana = b.aniocampana_proceso
              )
-and length(codpais) = 2;
+and length(codpais) = 2
+and c.estado_sicc = '0'
+order by 1,2;
 
 
-DROP TABLE IF EXISTS #fdettemplates_fdethybrysdata; 
+DROP TABLE IF EXISTS #fdettemplates_fdethybrysdata;
 SELECT 	DISTINCT
 		aniocampana as aniocampanaexpo, country as codpais, '' as despublico,
 CASE
@@ -39,71 +42,71 @@ INTO 	#fdettemplates_fdethybrysdata
 FROM 	fnc_virtual_coach.fdethybrysdata A
 WHERE EXISTS
 		(	SELECT 	*
-			FROM 	#PaisCampanas b 
+			FROM 	#PaisCampanas b
 			WHERE 	a.country = b.codpais AND
 					a.aniocampana = b.aniocampana
 		);
 
 DROP TABLE IF EXISTS #fdettemplates;
 SELECT *
-INTO #fdettemplates 
+INTO #fdettemplates
 FROM fnc_virtual_coach.fdettemplates a
 WHERE EXISTS
 		(	SELECT 	*
-			FROM 	#PaisCampanas b 
+			FROM 	#PaisCampanas b
 			WHERE 	a.codpais = b.codpais AND
 					a.aniocampanaexpo = b.aniocampana
 		);
 
 
-INSERT INTO #fdettemplates 
+INSERT INTO #fdettemplates
 (aniocampanaexpo, codpais, despublico, destipo, descategoria, dessubcategoria, descampania, destitulo, codcuc, codventa)
-SELECT 
+SELECT
 aniocampanaexpo, codpais, despublico, destipo, descategoria, dessubcategoria, descampania, destitulo, codcuc, codventa
 FROM #fdettemplates_fdethybrysdata a
-WHERE NOT EXISTS 
+WHERE NOT EXISTS
 	(	SELECT	*
 		FROM 	#fdettemplates  b
 		WHERE	a.aniocampanaexpo = b.aniocampanaexpo AND
 				a.codpais = b.codpais AND
 				LTRIM(RTRIM(UPPER(a.destitulo))) = LTRIM(RTRIM(UPPER(b.destitulo))) AND
-				LTRIM(RTRIM(UPPER(a.descampania))) = LTRIM(RTRIM(UPPER(b.descampania))) 
+				LTRIM(RTRIM(UPPER(a.descampania))) = LTRIM(RTRIM(UPPER(b.descampania)))
 	);
-	
+
 DELETE fnc_virtual_coach.fdettemplates
-WHERE  EXISTS 
+WHERE  EXISTS
 	(	SELECT	*
 		FROM 	#fdettemplates  b
 		WHERE	fdettemplates.aniocampanaexpo = b.aniocampanaexpo AND
 				fdettemplates.codpais = b.codpais AND
 				LTRIM(RTRIM(UPPER(fdettemplates.destitulo))) = LTRIM(RTRIM(UPPER(b.destitulo))) AND
-				LTRIM(RTRIM(UPPER(fdettemplates.descampania))) = LTRIM(RTRIM(UPPER(b.descampania))) 
+				LTRIM(RTRIM(UPPER(fdettemplates.descampania))) = LTRIM(RTRIM(UPPER(b.descampania)))
 	);
-	
+
 INSERT INTO fnc_virtual_coach.fdettemplates
 (aniocampanaexpo, codpais, despublico, destipo, descategoria, dessubcategoria, descampania, destitulo, codcuc, codventa)
-SELECT 
+SELECT
 aniocampanaexpo, codpais, despublico, destipo, descategoria, dessubcategoria, descampania, destitulo, codcuc, codventa
 FROM #fdettemplates;
 
 DELETE dom_virtual_coach.fdettemplates
 WHERE EXISTS
 		(	SELECT 	*
-			FROM 	#PaisCampanas b 
+			FROM 	#PaisCampanas b
 			WHERE 	fdettemplates.codpais = b.codpais AND
 					fdettemplates.aniocampanaexpo = b.aniocampana
 		);
 
 INSERT INTO dom_virtual_coach.fdettemplates
 (aniocampanaexpo, codpais, despublico, destipo, descategoria, dessubcategoria, descampania, destitulo, codcuc, codventa)
-SELECT 
+SELECT
 aniocampanaexpo, codpais, despublico, destipo, descategoria, dessubcategoria, descampania, destitulo, codcuc, codventa
 FROM #fdettemplates;
 
 -----------------------------------------History----------------------------------------------
-INSERT INTO wrk_virtual_coach.fdettemplates_history 
+INSERT INTO wrk_virtual_coach.fdettemplates_history
 (aniocampanaexpo, codpais, despublico, destipo, descategoria, dessubcategoria, descampania, destitulo, codcuc, codventa, origindayfile)
-SELECT 
+SELECT
 aniocampanaexpo, codpais, despublico, destipo, descategoria, dessubcategoria, descampania, destitulo, codcuc, codventa, (getdate() - interval '5 HOURS')
 FROM #fdettemplates;
 ----------------------------------------------------------------------------------------------
@@ -115,22 +118,22 @@ INTO #fdethybrysdata
 FROM fnc_virtual_coach.fdethybrysdata a
 WHERE EXISTS
 		(	SELECT 	*
-			FROM 	#PaisCampanas b 
+			FROM 	#PaisCampanas b
 			WHERE 	a.country = b.codpais AND
 					a.aniocampana= b.aniocampana
 		);
 
-	
-	
 
-	
+
+
+
 DROP TABLE IF EXISTS #Interacciones;
-SELECT 	campaignname, 
-       	communicationmedium, 
-       	country, 
-       	emailaddress, 
-       	fullname, 
-       	interactioncontentsubject, 
+SELECT 	campaignname,
+       	communicationmedium,
+       	country,
+       	emailaddress,
+       	fullname,
+       	interactioncontentsubject,
        	MAX(CAST(numberofsentmessages AS INTEGER) ) Enviados,
        	MAX(CAST(numberofdeliveredmessages AS INTEGER)) Recibidos,
        	MAX(CAST(numberofopenedmessages AS INTEGER)) Abiertos,
@@ -146,12 +149,12 @@ SELECT 	campaignname,
 		aniocampana
 INTO 	#Interacciones
 FROM 	#fdethybrysdata
-GROUP BY campaignname, 
-       	communicationmedium, 
-       	country, 
-       	emailaddress, 
-       	fullname, 
-       	interactioncontentsubject, 
+GROUP BY campaignname,
+       	communicationmedium,
+       	country,
+       	emailaddress,
+       	fullname,
+       	interactioncontentsubject,
        	yy1_codigoebelista_mps,
        	yy1_documentoidentidad_mps,
        	CAST('20' + right (id, 6) AS DATE),
@@ -177,19 +180,19 @@ WHERE 	ClicsUnicos > 1;
 DELETE 	dom_virtual_coach.fdetiteraccion
 WHERE	EXISTS
 		(	SELECT 	*
-			FROM 	#PaisCampanas b 
+			FROM 	#PaisCampanas b
 			WHERE 	fdetiteraccion.codpais = b.codpais AND
 					fdetiteraccion.aniocampana = b.aniocampana
-		); 	
+		);
 
 /*¨
  * Paso 8
  */
 INSERT	INTO dom_virtual_coach.fdetiteraccion(
-       	Fecha, CodEbelista, CampaniaMarketing, TituloContenido, CodPais, Pais, DocIdentidad, CorreoElectronico, 
+       	Fecha, CodEbelista, CampaniaMarketing, TituloContenido, CodPais, Pais, DocIdentidad, CorreoElectronico,
        	MensajesEnviados, MensajesEntregados, MensajesAbiertos, ClicsUnicos, CualquierClic, TipoInteraccion, tipomail, aniocampana)
 SELECT 	DISTINCT
-		max(Fecha), CodEbelista, campaignname, interactioncontentsubject, a.country, 
+		max(Fecha), CodEbelista, campaignname, interactioncontentsubject, a.country,
 		(select B.despais from fnc_analitico.dwh_dpais b where ltrim(trim(a.country)) = ltrim(rtrim(b.codpais))),
 		DocIdentidad,
        	emailaddress,
@@ -203,7 +206,7 @@ SELECT 	DISTINCT
        	aniocampana
 FROM 	#Interacciones a
 WHERE 	country IS NOT NULL
-group by CodEbelista, campaignname, interactioncontentsubject, a.country, 
+group by CodEbelista, campaignname, interactioncontentsubject, a.country,
 		DocIdentidad,
        	emailaddress,
        	Enviados,
@@ -216,10 +219,10 @@ group by CodEbelista, campaignname, interactioncontentsubject, a.country,
        	aniocampana;
 ------------------------------------------------History---------------------------------------
 INSERT	INTO dom_virtual_coach.fdetiteraccion(
-       	Fecha, CodEbelista, CampaniaMarketing, TituloContenido, CodPais, Pais, DocIdentidad, CorreoElectronico, 
+       	Fecha, CodEbelista, CampaniaMarketing, TituloContenido, CodPais, Pais, DocIdentidad, CorreoElectronico,
        	MensajesEnviados, MensajesEntregados, MensajesAbiertos, ClicsUnicos, CualquierClic, TipoInteraccion, tipomail, aniocampana)
 SELECT 	DISTINCT
-		max(Fecha), CodEbelista, campaignname, interactioncontentsubject, a.country, 
+		max(Fecha), CodEbelista, campaignname, interactioncontentsubject, a.country,
 		(select B.despais from fnc_analitico.dwh_dpais b where ltrim(trim(a.country)) = ltrim(rtrim(b.codpais))),
 		DocIdentidad,
        	emailaddress,
@@ -233,7 +236,7 @@ SELECT 	DISTINCT
        	aniocampana
 FROM 	#Interacciones a
 WHERE 	country IS NOT NULL
-group by CodEbelista, campaignname, interactioncontentsubject, a.country, 
+group by CodEbelista, campaignname, interactioncontentsubject, a.country,
 		DocIdentidad,
        	emailaddress,
        	Enviados,
@@ -245,10 +248,10 @@ group by CodEbelista, campaignname, interactioncontentsubject, a.country,
        	tipomail,
        	aniocampana;
 
-update wrk_virtual_coach.fdetiteraccion_history 
+update wrk_virtual_coach.fdetiteraccion_history
 set origindayfile = (getdate() - interval '5 HOURS')
 where origindayfile is null;
 ----------------------------------------------------------------------------------------------
-     
+
 
 DROP TABLE IF EXISTS #Interacciones;
