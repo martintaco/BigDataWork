@@ -15,7 +15,7 @@ GROUP BY
 	resumen_log_usabilidad.Campania
 	,resumen_log_usabilidad.Pais;
 
- 
+
 CREATE TEMP TABLE #CAMPANIA_PAIS AS
 SELECT
 	RANK_CAMPANIA_PAIS.Campania
@@ -24,8 +24,8 @@ FROM
 	#RANK_CAMPANIA_PAIS RANK_CAMPANIA_PAIS
 WHERE
 	RANK_CAMPANIA_PAIS.Rank# <= 6;
- 
- 
+
+
 CREATE TEMP TABLE #Days_Connected AS
 SELECT
 	A.campania
@@ -69,7 +69,7 @@ FROM(
 	GROUP BY 1,2,3,4,5,6,7,8,9
 	) A
 GROUP BY 1,2,3,4,5,6,7,8;
- 
+
 
 SELECT
 	Days_Connected.campania Campania
@@ -80,13 +80,13 @@ SELECT
 	,Days_Connected.usuario CodSocia
 	,det_dias_paises.diashabiles CantDiashabiles
 	,TRUNC(det_dias_paises.diashabiles::DECIMAL(10,2) * Days_Connected.factor) CantDiasRequeridos
-	,Days_Connected.Days_ConnectedHome CantDiasapp
-	,Days_Connected.Days_ConnectedRdD CantDiasrdd
-	,Days_Connected.Days_ConnectedRdV CantDiasrdv
-	,CASE WHEN TRUNC(det_dias_paises.diashabiles::DECIMAL(10,2) * Days_Connected.factor) <= Days_Connected.Days_ConnectedHome THEN 1 ELSE 0 END FlagUsaApp
-	,CASE WHEN TRUNC(det_dias_paises.diashabiles::DECIMAL(10,2) * Days_Connected.factor) <= Days_Connected.Days_ConnectedRdD THEN 1 ELSE 0 END FlagUsaRdD
-	,CASE WHEN TRUNC(det_dias_paises.diashabiles::DECIMAL(10,2) * Days_Connected.factor) <= Days_Connected.Days_ConnectedRdV THEN 1 ELSE 0 END FlagUsaRdV
-INTO #Table1
+	,coalesce(Days_Connected.Days_ConnectedHome,0) CantDiasapp
+	,coalesce(Days_Connected.Days_ConnectedRdD,0) CantDiasrdd
+	,coalesce(Days_Connected.Days_ConnectedRdV,0) CantDiasrdv
+	,CASE WHEN TRUNC(det_dias_paises.diashabiles::DECIMAL(10,2) * Days_Connected.factor) <= coalesce(Days_Connected.Days_ConnectedHome,0) THEN 1 ELSE 0 END FlagUsaApp
+	,CASE WHEN TRUNC(det_dias_paises.diashabiles::DECIMAL(10,2) * Days_Connected.factor) <= coalesce(Days_Connected.Days_ConnectedRdD,0) THEN 1 ELSE 0 END FlagUsaRdD
+	,CASE WHEN TRUNC(det_dias_paises.diashabiles::DECIMAL(10,2) * Days_Connected.factor) <= coalesce(Days_Connected.Days_ConnectedRdV,0) THEN 1 ELSE 0 END FlagUsaRdV
+INTO #Table1 
 FROM
 	#Days_Connected Days_Connected
 INNER JOIN
@@ -96,7 +96,7 @@ ON
 	AND det_dias_paises.codpais = Days_Connected.pais
 	AND det_dias_paises.seccion = (RTRIM(Days_Connected.zona) || RTRIM(Days_Connected.seccion))
 ORDER BY 1,2,3,4,5,6;
-	
+
 	unload($$ select * from #Table1 $$)
 	to 's3://belc-bigdata-domain-dlk-prd/dom-hana/Res_Uso_consultora/Usabilidad_'
 	access_key_id '{ACCESS_KEY}'
@@ -108,7 +108,7 @@ ORDER BY 1,2,3,4,5,6;
 	ESCAPE
 	ADDQUOTES
 	;
-	
+
 	DROP TABLE #RANK_CAMPANIA_PAIS;
 	DROP TABLE #CAMPANIA_PAIS;
 	DROP TABLE #Days_Connected;
