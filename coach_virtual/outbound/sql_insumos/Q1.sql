@@ -12,7 +12,7 @@ INTO #PaisCampanas_tmp;
  /*Se agrega un inner join para que se haga un mactch con la tabla de Campañas de facturación*/
 
 DROP TABLE IF EXISTS #PaisCampanas;
-SELECT DISTINCT country as codpais, aniocampana, '000000' AS ANIOCAMPANA_U6C, '000000' AS ANIOCAMPANA_U1C
+SELECT DISTINCT country as codpais, a.aniocampana, '000000' AS ANIOCAMPANA_U6C, '000000' AS ANIOCAMPANA_U1C
 INTO #PaisCampanas
 FROM fnc_virtual_coach.fdethybrysdata a
 inner join fnc_analitico.ctr_cierre_generico c on a.country = c.cod_pais and a.aniocampana >= c.aniocampana
