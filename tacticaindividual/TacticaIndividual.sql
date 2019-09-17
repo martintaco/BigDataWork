@@ -163,3 +163,8 @@ ADDQUOTES
 ALLOWOVERWRITE
 header
 PARALLEL OFF;
+Drop TABLE if EXISTS sbx_temp.temp_fvtaproebecam1;
+Drop TABLE if EXISTS sbx_temp.temp_fvtaprocammes1;
+drop table if EXISTS sbx_temp.temp_Data_generate;
+drop table if EXISTS sbx_temp.temp_Data_generate2;
+drop table if EXISTS sbx_temp.temp_Data_generate3;

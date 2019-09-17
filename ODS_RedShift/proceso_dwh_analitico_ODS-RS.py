@@ -46,7 +46,7 @@ stgTables = ['TMP_ARP_DET_PLANRUTARDD', 'TMP_ARP_DET_CABPLANRUTARDD']
 
 for table in stgTables:
     try:
-        cursor.execute("TRUNCATE TABLE lan_dm_analitico." + table + ";")
+        cursor.execute("DELETE FROM lan_dm_analitico." + table + ";")
     except Exception as error:
         sys.exit(repr(error))
 
