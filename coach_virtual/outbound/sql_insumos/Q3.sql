@@ -26,9 +26,9 @@ UPDATE #PaisCampanas  SET ANIOCAMPANA_U1C = f_calculaaniocampana(codpais, anioca
 
 DROP TABLE IF EXISTS #Consultoras_tmp;
 SELECT        CodPais, CodEbelista, ( SELECT     g.aniocampana
-                                                                                           FROM   #PaisCampanas g
-                                                                                           WHERE  a.CodPais = g.CodPais AND
-                                                                                                         a.AnioCampana = g.ANIOCAMPANA_U1C ) AS aniocampana
+FROM   #PaisCampanas g
+WHERE  a.CodPais = g.CodPais AND
+			 a.AnioCampana = g.ANIOCAMPANA_U1C ) AS aniocampana
 INTO   #Consultoras_tmp
 FROM   fnc_analitico.dwh_fstaebecam a
 WHERE         EXISTS
@@ -45,9 +45,9 @@ WHERE         EXISTS
 INSERT INTO   #Consultoras_tmp
 (CodPais, CodEbelista, aniocampana)
 SELECT        A.CodPais, CodEbelista, ( SELECT   g.aniocampana
-                                                                                           FROM   #PaisCampanas g
-                                                                                           WHERE  a.CodPais = g.CodPais AND
-                                                                                                         a.AnioCampana = g.ANIOCAMPANA) AS aniocampana
+FROM   #PaisCampanas g
+WHERE  a.CodPais = g.CodPais AND
+			 a.AnioCampana = g.ANIOCAMPANA) AS aniocampana
 FROM   fnc_analitico.dwh_fstaebecam a
               INNER JOIN fnc_analitico.dwh_dstatus e ON a.codpais = e.codpais and a.codstatus= e.codstatus
 WHERE         EXISTS
@@ -83,7 +83,7 @@ WHERE         EXISTS
               );
 
 DROP TABLE IF EXISTS #PaisCampanasCUV;
-SELECT        DISTINCT codpais, aniocampanaexpo AS ANIOCAMPANA, CodVenta, destitulo as TituloContenido, descampania as campaniamarketing, '               ' as codsap
+SELECT DISTINCT codpais, aniocampanaexpo AS ANIOCAMPANA, CodVenta, destitulo as TituloContenido, descampania as campaniamarketing, '               ' as codsap
 INTO   #PaisCampanasCUV
 FROM   fnc_virtual_coach.fdettemplates
 WHERE  EXISTS
@@ -99,7 +99,7 @@ DELETE  #PaisCampanasCUV WHERE NOT LEN(LTRIM(RTRIM(CodVenta))) = 5;
 
 
 DROP TABLE IF EXISTS #PaisCampanasCUC;
-SELECT        DISTINCT A.codpais, aniocampanaexpo AS ANIOCAMPANA, A.codventa, a.CODCUC, destitulo as TituloContenido, descampania as campaniamarketing, '               ' as codsap , D.desmarca, d.descripcuc as desproductocuc
+SELECT DISTINCT A.codpais, aniocampanaexpo AS ANIOCAMPANA, A.codventa, a.CODCUC, destitulo as TituloContenido, descampania as campaniamarketing, '               ' as codsap , D.desmarca, d.descripcuc as desproductocuc
 INTO   #PaisCampanasCUC
 FROM   fnc_virtual_coach.fdettemplates a
               INNER JOIN fnc_analitico.dwh_dproducto d on a.CODCUC = d.cuc

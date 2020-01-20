@@ -56,7 +56,7 @@ try:
 	client = boto3.resource('s3', aws_access_key_id= ACCESS_KEY, aws_secret_access_key= SECRET_KEY)
 
 	for pais in paises:
-		cursor.execute("UNLOAD ($$ SELECT * FROM dom_digital.det_consultora_sb where codpais = '"+str(pais)+"';$$) TO 's3://belc-bigdata-domain-dlk-prd/dom-digital/rutadesarrollo/"+pais+'/'+pais+'_'+str(start_time.year)+str_month+str_day+"' CREDENTIALS 'aws_access_key_id="+ACCESS_KEY+";aws_secret_access_key="+SECRET_KEY+"' DELIMITER ',' ALLOWOVERWRITE PARALLEL OFF ESCAPE ADDQUOTES ;")
+		cursor.execute("UNLOAD ($$ SELECT * FROM dom_digital.det_consultora_sb where codpais = '"+str(pais)+"';$$) TO 's3://belc-bigdata-domain-dlk-prd/dom-digital/rutadesarrollo/"+pais+'/'+pais+'_'+str(start_time.year)+str_month+str_day+"' CREDENTIALS 'aws_access_key_id="+ACCESS_KEY+";aws_secret_access_key="+SECRET_KEY+"' DELIMITER ',' ADDQUOTES NULL AS '' PARALLEL OFF ESCAPE;")
 		client.Object('belc-bigdata-domain-dlk-prd','dom-digital/rutadesarrollo/'+pais+'/'+ pais + '_' + str(start_time.year)+str_month + str_day + '.csv').copy_from(CopySource='belc-bigdata-domain-dlk-prd/dom-digital/rutadesarrollo/' + pais + '/' + pais + '_' + str(start_time.year) + str_month + str_day + '000')
 		client.Object('belc-bigdata-domain-dlk-prd','dom-digital/rutadesarrollo/'+pais+'/'+ pais + '_' + str(start_time.year) + str_month + str_day + '000').delete()
 

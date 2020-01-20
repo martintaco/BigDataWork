@@ -313,14 +313,14 @@ WHERE  EXISTS
                             mh_vc_consultoramctl.aniocampana = b.aniocampana
               );
 
-DELETE FROM dom_virtual_coach.mh_vc_consultora_template
-WHERE  EXISTS
-              (
-              SELECT        *
-              FROM   #PaisCampanas b
-              WHERE  mh_vc_consultora_template.codpais = b.codpais AND
-                            mh_vc_consultora_template.aniocampana = b.aniocampana
-              );
+-- DELETE FROM dom_virtual_coach.mh_vc_consultora_template
+-- WHERE  EXISTS
+             -- (
+             -- SELECT        *
+              -- FROM   #PaisCampanas b
+              -- WHERE  mh_vc_consultora_template.codpais = b.codpais AND
+                            -- mh_vc_consultora_template.aniocampana = b.aniocampana
+             -- );
 
 
 DELETE FROM dom_virtual_coach.mh_vc_consultorageneral
@@ -371,26 +371,26 @@ FROM   #mh_vc_consultoramctl;
 -----------------------------------------------------------------------------
 
 
-INSERT INTO dom_virtual_coach.mh_vc_consultora_template
-(
-codpais, aniocampana, fechaini, fechafin, codebelista, codzona, flagcontrol, tipomail, comportamientorolling,
-titulocontenido, mensajesenviados, mensajesentregados, mensajesabiertos, clicsunicos, flagbueno
-)
-SELECT
-codpais, aniocampana, fechaini, fechafin, codebelista, codzona, flagcontrol, tipomail, comportamientorolling,
-titulocontenido, mensajesenviados, mensajesentregados, mensajesabiertos, clicsunicos, flagbueno
-FROM   #mh_vc_consultora_template;
+-- INSERT INTO dom_virtual_coach.mh_vc_consultora_template
+-- (
+-- codpais, aniocampana, fechaini, fechafin, codebelista, codzona, flagcontrol, tipomail, comportamientorolling,
+-- titulocontenido, mensajesenviados, mensajesentregados, mensajesabiertos, clicsunicos, flagbueno
+-- )
+-- SELECT
+-- codpais, aniocampana, fechaini, fechafin, codebelista, codzona, flagcontrol, tipomail, comportamientorolling,
+-- titulocontenido, mensajesenviados, mensajesentregados, mensajesabiertos, clicsunicos, flagbueno
+-- FROM   #mh_vc_consultora_template;
 
---------------------------------History--------------------------------------
-INSERT INTO wrk_virtual_coach.mh_vc_consultora_template_history
-(
-codpais, aniocampana, fechaini, fechafin, codebelista, codzona, flagcontrol, tipomail, comportamientorolling,
-titulocontenido, mensajesenviados, mensajesentregados, mensajesabiertos, clicsunicos, flagbueno, origindayfile
-)
-SELECT
-codpais, aniocampana, fechaini, fechafin, codebelista, codzona, flagcontrol, tipomail, comportamientorolling,
-titulocontenido, mensajesenviados, mensajesentregados, mensajesabiertos, clicsunicos, flagbueno, (getdate() - interval '5 HOURS')
-FROM   #mh_vc_consultora_template;
+-- --------------------------------History--------------------------------------
+-- INSERT INTO wrk_virtual_coach.mh_vc_consultora_template_history
+-- (
+-- codpais, aniocampana, fechaini, fechafin, codebelista, codzona, flagcontrol, tipomail, comportamientorolling,
+-- titulocontenido, mensajesenviados, mensajesentregados, mensajesabiertos, clicsunicos, flagbueno, origindayfile
+-- )
+-- SELECT
+-- codpais, aniocampana, fechaini, fechafin, codebelista, codzona, flagcontrol, tipomail, comportamientorolling,
+-- titulocontenido, mensajesenviados, mensajesentregados, mensajesabiertos, clicsunicos, flagbueno, (getdate() - interval '5 HOURS')
+-- FROM   #mh_vc_consultora_template;
 -----------------------------------------------------------------------------
 
 INSERT INTO dom_virtual_coach.mh_vc_consultorageneral

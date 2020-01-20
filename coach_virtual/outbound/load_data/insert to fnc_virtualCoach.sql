@@ -79,3 +79,17 @@ null,
 campanaexposicion as aniocampana
 	FROM lan_virtual_coach.fdethybrysdata
 );
+
+delete
+from
+	fnc_virtual_coach.fdethybrysdata
+where
+	interactionutcdate >= (
+		Select to_char(fecha-interval '1 DAY', 'YYYY-mm-dd') interactionutcdate
+	from
+		fnc_analitico.ctr_cierre_generico
+	where
+		fnc_virtual_coach.fdethybrysdata.country = fnc_analitico.ctr_cierre_generico.cod_pais
+		and fnc_virtual_coach.fdethybrysdata.aniocampana = fnc_analitico.ctr_cierre_generico.aniocampana
+		and estado_cierre = '1'
+		and fnc_analitico.ctr_cierre_generico.aniocampana >= (case when fnc_analitico.ctr_cierre_generico.cod_pais != 'PR' then '201914' else '201910' end));

@@ -22,7 +22,13 @@ order by 1,2;
 UPDATE #PaisCampanas  SET ANIOCAMPANA_U6C = f_calculaaniocampana(codpais, aniocampana, -6);
 UPDATE #PaisCampanas  SET ANIOCAMPANA_U1C = f_calculaaniocampana(codpais, aniocampana, -1);
 
+/*Ejecucion para campanas fijas*/
+delete from #PaisCampanas where aniocampana != '201913';
 
+update #PaisCampanas
+set aniocampana = '201911'
+where aniocampana = '201913';
+----------------------
 
 DROP TABLE IF EXISTS #Consultoras_tmp;
 SELECT        CodPais, CodEbelista, ( SELECT     g.aniocampana

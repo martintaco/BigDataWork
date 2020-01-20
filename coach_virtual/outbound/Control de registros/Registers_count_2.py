@@ -33,7 +33,7 @@ else:
 	str_day = str((start_time-dia).day)
 str_year = str(start_time.year)
 zipFile = str_year+"-"+str_month+"-"+str_day+".json.gz"
-origin_zip_file = "s3://belc-bigdata-landing-dlk-prd/lan-virtualcoach/input/data-hybris/"+zipFile
+origin_zip_file = "belc-bigdata-landing-dlk-prd/lan-virtualcoach/input/data-hybris/"+zipFile
 dest_zip_file = "s3://belc-bigdata-landing-dlk-prd/lan-virtualcoach/input/Register/"
 remove_zip_file = "s3://belc-bigdata-landing-dlk-prd/lan-virtualcoach/input/Register/"+zipFile
 #Conexion con el bucket de S3
@@ -41,11 +41,11 @@ s3 = boto3.client('s3',
                       aws_access_key_id= S3_ACCESS_KEY,
                       aws_secret_access_key= S3_SECRET_KEY
                       )
-
+client = boto3.resource('s3', aws_access_key_id=S3_ACCESS_KEY, aws_secret_access_key=S3_SECRET_KEY)
 # move zip to backup
-cp_zip_command = ["aws", "s3", "cp", origin_zip_file, dest_zip_file]
-subprocess.run(cp_zip_command)
-print('the zip file has been copied it into Register')
+
+#client.Object(S3_BUCKET_NAME_LOADED,'lan-virtualcoach/input/Register/'+zipFile).copy_from(CopySource=origin_zip_file)
+#print('the zip file has been copied it into Register')
 
 # Definicion de variables
 n = []
@@ -85,9 +85,8 @@ for files in listfiles:
         print(e)
         #raise e
 #remove file from register
-rm_zip_command = ["aws", "s3", "rm", remove_zip_file]
-subprocess.run(rm_zip_command)
-print('the zip file has been removed it from Register')
+#client.Object(S3_BUCKET_NAME_LOADED,'lan-virtualcoach/input/Register/'+zipFile).delete()
+#print('the zip file has been removed it from Register')
 
 # Unir ambas listas de registros y files
 d =  {'Files':NameFiles[1:],'Registers':n[1:]}
