@@ -86,7 +86,7 @@ SELECT
 	,CASE WHEN TRUNC(det_dias_paises.diashabiles::DECIMAL(10,2) * Days_Connected.factor) <= coalesce(Days_Connected.Days_ConnectedHome,0) THEN 1 ELSE 0 END FlagUsaApp
 	,CASE WHEN TRUNC(det_dias_paises.diashabiles::DECIMAL(10,2) * Days_Connected.factor) <= coalesce(Days_Connected.Days_ConnectedRdD,0) THEN 1 ELSE 0 END FlagUsaRdD
 	,CASE WHEN TRUNC(det_dias_paises.diashabiles::DECIMAL(10,2) * Days_Connected.factor) <= coalesce(Days_Connected.Days_ConnectedRdV,0) THEN 1 ELSE 0 END FlagUsaRdV
-INTO #Table1 
+INTO #Table1
 FROM
 	#Days_Connected Days_Connected
 INNER JOIN
@@ -98,7 +98,7 @@ ON
 ORDER BY 1,2,3,4,5,6;
 
 	unload($$ select * from #Table1 $$)
-	to 's3://belc-bigdata-domain-dlk-prd/dom-hana/Res_Uso_consultora/Usabilidad_'
+	to 's3://belc-bigdata-domain-dlk-prd/dom-hana/Res_Uso_consultora/UsabilidadDLK_'
 	access_key_id '{ACCESS_KEY}'
 	secret_access_key '{SECRET_KEY}'
 	delimiter '\t'

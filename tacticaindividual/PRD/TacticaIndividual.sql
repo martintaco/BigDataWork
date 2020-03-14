@@ -11,7 +11,7 @@ sum(realvtamnneto) as VtaRealMNNeto,sum(realvtamnfaltneto) as VtarealmnFaltneto,
 sum(costoreposicionmn) as costoreposicionmn
 into sbx_temp.temp_fvtaproebecam1
 from fnc_analitico.dwh_fvtaproebecam
-where aniocampana between {Aniocampana_ini} and {Aniocampana_fin}
+where aniocampana between '{Aniocampana_ini}' and '{Aniocampana_fin}'
 and case '{CodPais}' when 'BO' then codpais != 'PR'
 			  			when 'PR' then codpais = 'PR' END
 group by codpais,aniocampana,codsap,codtipooferta,realtcpromedio;
@@ -20,7 +20,7 @@ group by codpais,aniocampana,codsap,codtipooferta,realtcpromedio;
 select codpais,aniocampana,codsap,codtipooferta,sum(estuuvendidas) as estuuvendidas,sum(estvtamnneto) as estvtamnneto,sum(estvtadolneto) as estvtadolneto
 into  table sbx_temp.temp_fvtaprocammes1
 from fnc_analitico.dwh_fvtaprocammes
-where aniocampana between {Aniocampana_ini} and {Aniocampana_fin}
+where aniocampana between '{Aniocampana_ini}' and '{Aniocampana_fin}'
 and case '{CodPais}' when 'BO' then codpais != 'PR'
 			  			when 'PR' then codpais = 'PR' END
 group by codpais,aniocampana,codsap,codtipooferta;
@@ -56,12 +56,13 @@ left join fnc_analitico.dwh_dmatrizcampana c on a.codpais = c.codpais and a.anio
 left join sbx_temp.temp_fvtaprocammes1 d on a.codpais = d.codpais and a.aniocampana = d.aniocampana and a.codsap = d.codsap and a.codtipooferta = d.codtipooferta
 left join fnc_analitico.dwh_fnumpedcam e on a.codpais = e.codpais and a.aniocampana = e.aniocampana
 left join fnc_analitico.dwh_dtipooferta f on a.codpais = f.codpais and a.codtipooferta = f.codtipooferta
-where a.aniocampana between {Aniocampana_ini} and {Aniocampana_fin}
+where a.aniocampana between '{Aniocampana_ini}' and '{Aniocampana_fin}'
 and case '{CodPais}' when 'BO' then a.codpais != 'PR'
 			  			when 'PR' then a.codpais = 'PR' END
 and b.descategoria in ('TRATAMIENTO FACIAL','TRATAMIENTO CORPORAL','MAQUILLAJE','FRAGANCIAS','CUIDADO PERSONAL');
 --and a.codtipooferta < '200';
 
+--Filtro de tipos de oferta que se venden en catalogo
 Select distinct a.*
 into sbx_temp.temp_Data_generate2
 from sbx_temp.temp_Data_generate a
@@ -69,14 +70,15 @@ inner join fnc_analitico.dwh_dtipooferta b on a.codtipooferta = b.codtipooferta
 where b.codtipoprofit = '01';
 
 
-insert into  sbx_temp.temp_Data_generate3
+insert into sbx_temp.det_tacticaind
 select codpais,desunidadnegocio,aniomarketing,aniocampana,campania,codmarca,desmarca,codcategoria,clase_ajustada,codclase,codsubcategoria,desclase,tipoajustado,codtipo,destipo,cuc,descuc,codsap,desproducto,bpcs,bpcstono,codgrupooferta,grupoofertaajustado,grupoofertacosmeticos,codtipooferta,
-avg(precionormalmn) as precionormalmn,avg(preciooferta) as preciooferta,avg(precionormaldol) as precionormaldol,avg(precioofertadol) as precioofertadol,avg(uudemandadas) as uudemandadas,avg(uurealvendidas) as uurealvendidas,avg(estuuvendidas) as estuuvendidas,avg(ventanetamndemandada) as ventanetamndemandada,avg(vtarealmnneto) as vtarealmnneto,avg(estvtamnneto) as estvtamnneto,avg(ventanetadoldemd) as ventanetadoldemd,avg(ventanetadolreal) as ventanetadolreal,avg(estvtadolneto) as estvtadolneto,avg(costoreposiciondolreal) as costoreposiciondolreal,avg(costoreposiciondolest) as costoreposiciondolest,avg(costodereposicionuntdolreal) as costodereposicionuntdolreal,avg(costodereposicionuntdolest) as costodereposicionuntdolest,avg(realnropedidos) as realnropedidos,avg(estnropedidos) as estnropedidos,avg(realtcpromedio) as realtcpromedio,submarcas,desproductosupergenerico, avg(ventanetadolrealcte) as ventanetadolrealcte,etiquetadetopsellers
---into sbx_temp.temp_Data_generate3
+avg(precionormalmn) as precionormalmn,avg(preciooferta) as preciooferta,avg(precionormaldol) as precionormaldol,avg(precioofertadol) as precioofertadol,avg(uudemandadas) as uudemandadas,avg(uurealvendidas) as uurealvendidas,avg(estuuvendidas) as estuuvendidas,avg(ventanetamndemandada) as ventanetamndemandada,avg(vtarealmnneto) as vtarealmnneto,avg(estvtamnneto) as estvtamnneto,avg(ventanetadoldemd) as ventanetadoldemd,avg(ventanetadolreal) as ventanetadolreal,avg(estvtadolneto) as estvtadolneto,avg(costoreposiciondolreal) as costoreposiciondolreal,avg(costoreposiciondolest) as costoreposiciondolest,avg(costodereposicionuntdolreal) as costodereposicionuntdolreal,avg(costodereposicionuntdolest) as costodereposicionuntdolest,avg(realnropedidos) as realnropedidos,avg(estnropedidos) as estnropedidos,avg(realtcpromedio) as realtcpromedio,submarcas,desproductosupergenerico, avg(ventanetadolrealcte) as ventanetadolrealcte,etiquetadetopsellers, 0 as actividad
+--into sbx_temp.det_tacticaind
 from sbx_temp.temp_Data_generate2
 group by codpais,desunidadnegocio,aniomarketing,aniocampana,campania,codmarca,desmarca,codcategoria,clase_ajustada,codclase,codsubcategoria,desclase,tipoajustado,codtipo,destipo,cuc,descuc,codsap,desproducto,bpcs,bpcstono,codgrupooferta,grupoofertaajustado,grupoofertacosmeticos,codtipooferta,submarcas, desproductosupergenerico,etiquetadetopsellers;
 
-Update sbx_temp.temp_Data_generate3
+--Se llena el campo bpcs con codigos bpcstono cuando el campo bpcs es null
+Update sbx_temp.det_tacticaind
 set bpcs = bpcstono
 where bpcs is null;
 
@@ -92,7 +94,7 @@ avg(precioofertamn) as precioofertamn,avg(precioofertadol) as precioofertadol,av
 avg(precionormalmn) as precionormalmn
 into sbx_temp.temp_fvtaprocammes1
 from fnc_analitico.dwh_fvtaprocammes
-where aniocampana between {Aniocampana_ini2} and {Aniocampana_fin2}
+where aniocampana between '{Aniocampana_ini2}' and '{Aniocampana_fin2}'
 and case '{CodPais}' when 'BO' then codpais != 'PR'
 			  			when 'PR' then codpais = 'PR' END
 group by codpais,aniocampana,codsap,codtipooferta;
@@ -127,7 +129,7 @@ left join fnc_analitico.dwh_dproducto b on a.codsap = b.codsap
 left join fnc_analitico.dwh_dmatrizcampana c on a.codpais = c.codpais and a.aniocampana = c.aniocampana and a.codsap = c.codsap and a.codtipooferta = c.codtipooferta
 left join fnc_analitico.dwh_fnumpedcam e on a.codpais = e.codpais and a.aniocampana = e.aniocampana
 left join fnc_analitico.dwh_dtipooferta f on a.codpais = f.codpais and a.codtipooferta = f.codtipooferta
-where a.aniocampana between {Aniocampana_ini2} and {Aniocampana_fin2}
+where a.aniocampana between '{Aniocampana_ini2}' and '{Aniocampana_fin2}'
 and case '{CodPais}' when 'BO' then a.codpais != 'PR'
 			  			when 'PR' then a.codpais = 'PR' END
 and b.descategoria in ('TRATAMIENTO FACIAL','TRATAMIENTO CORPORAL','MAQUILLAJE','FRAGANCIAS','CUIDADO PERSONAL');
@@ -144,17 +146,17 @@ Update sbx_temp.temp_Data_generate2
 set bpcs = bpcstono
 where bpcs is null;
 
-insert into  sbx_temp.temp_Data_generate3
+insert into sbx_temp.det_tacticaind
 select codpais,desunidadnegocio,aniomarketing,aniocampana,campania,codmarca,desmarca,codcategoria,clase_ajustada,codclase,codsubcategoria,desclase,tipoajustado,codtipo,destipo,cuc,descuc,codsap,desproducto,bpcs,bpcstono,codgrupooferta,grupoofertaajustado,grupoofertacosmeticos,codtipooferta,
-avg(precionormalmn) as precionormalmn,avg(precioofertamn) as precioofertamn,avg(precionormaldol) as precionormaldol,avg(precioofertadol) as precioofertadol,uudemandadas,uurealvendidas,avg(estuuvendidas) as estuuvendidas,ventanetamndemandada,vtarealmnneto,avg(estvtamnneto) as estvtamnneto,ventanetadoldemd,ventanetadolreal,avg(estvtadolneto) as estvtadolneto,costoreposiciondolreal,costoreposiciondolest,costodereposicionuntdolreal,costodereposicionuntdolest,avg(realnropedidos) as realnropedidos,avg(estnropedidos) as estnropedidos,avg(realtcpromedio) as realtcpromedio,submarcas,desproductosupergenerico,ventanetadolrealcte,etiquetadetopsellers
---into sbx_temp.temp_Data_generate3
+avg(precionormalmn) as precionormalmn,avg(precioofertamn) as precioofertamn,avg(precionormaldol) as precionormaldol,avg(precioofertadol) as precioofertadol,uudemandadas,uurealvendidas,avg(estuuvendidas) as estuuvendidas,ventanetamndemandada,vtarealmnneto,avg(estvtamnneto) as estvtamnneto,ventanetadoldemd,ventanetadolreal,avg(estvtadolneto) as estvtadolneto,costoreposiciondolreal,costoreposiciondolest,costodereposicionuntdolreal,costodereposicionuntdolest,avg(realnropedidos) as realnropedidos,avg(estnropedidos) as estnropedidos,avg(realtcpromedio) as realtcpromedio,submarcas,desproductosupergenerico,ventanetadolrealcte,etiquetadetopsellers , 1 as actividad
+--into sbx_temp.det_tacticaind
 from sbx_temp.temp_Data_generate2
 group by codpais,desunidadnegocio,aniomarketing,aniocampana,campania,codmarca,desmarca,codcategoria,clase_ajustada,codclase,codsubcategoria,desclase,tipoajustado,codtipo,destipo,cuc,descuc,codsap,desproducto,bpcs,bpcstono,codgrupooferta,grupoofertaajustado,grupoofertacosmeticos,codtipooferta,uudemandadas,uurealvendidas,ventanetamndemandada,vtarealmnneto,ventanetadoldemd,ventanetadolreal,costoreposiciondolreal,costoreposiciondolest,costodereposicionuntdolreal,costodereposicionuntdolest,submarcas,desproductosupergenerico,ventanetadolrealcte,etiquetadetopsellers;
 
 
-unload($$ select * from sbx_temp.temp_Data_generate3 where precionormalmn is not null $$)
+unload($$ select * from sbx_temp.det_tacticaind where precionormalmn is not null $$)
 --to 's3://belc-bigdata-landing-dlk-qas/forecast-data/Bigdata/NovoApp/TacticaInd/data_TacticaIndividual.txt'
-to 's3://belc-bigdata-landing-dlk-qas/forecast-data/Bigdata/NovoApp/TacticaInd/data_TacticaIndividual.txt'
+to 's3://belc-bigdata-landing-dlk-prd/migracion/Bigdata/NovoApp/TacticaInd/data_TacticaIndividual.txt'
 access_key_id '{ACCESS_KEY}'
 secret_access_key '{SECRET_KEY}'
 delimiter '\t'

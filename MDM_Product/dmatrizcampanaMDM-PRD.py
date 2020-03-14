@@ -3,7 +3,7 @@ import datetime
 import sys
 import boto3
 
-## Autor: Martin Taco
+## Autor: David Ascencios
 
 ## Uso: python (thisFile).py hostDBRS puertoBDRS nombreBD usuarioRS contrasenhaRS rutaAbsolutaDelArchivo archivoSQL
 ## Observaciones: El archivo SQL debe estar libre de comentarios (-- o /*) para una ejecucion correcta.
@@ -44,23 +44,23 @@ try:
     client = boto3.resource('s3', aws_access_key_id= ACCESS_KEY,
                             aws_secret_access_key= SECRET_KEY)
 
-    cursor.execute("drop table IF EXISTS Temp_data;")
-    cursor.execute("drop table IF EXISTS #Temp_data1;")
+    #cursor.execute("drop table IF EXISTS Temp_data;")
+    cursor.execute("drop table IF EXISTS #Temp_data2;")
 
     #cursor.execute("Select * into Temp_data from fnc_analitico.dwh_dmatrizcampana where codpais != 'PR' and aniocampana >= '" + str(aniocampana1) + "' Union select * from fnc_analitico.dwh_dmatrizcampana where codpais = 'PR' and aniocampana >= '" + str(aniocampana2) + "';")
-    cursor.execute("Select * into #Temp_data1 from fnc_analitico.dwh_dmatrizcampana where codpais != 'PR' and aniocampana >= '" + str(aniocampana1) + "' Union select * from fnc_analitico.dwh_dmatrizcampana where codpais = 'PR' and aniocampana >= '" + str(aniocampana2) + "';")
+    cursor.execute("Select aniocampana,codcanalventa,codcatalogo,codestrategia,codtipooferta,codventa,descatalogo,destipooferta,nropagina,numoferta,precionormalmn,preciooferta,preciovtapropuestomn,codtipocatalogo,desargventa,desexposicion,desladopag,destipocatalogo,desubicacioncatalogo,fotomodelo,fotoproducto,nropaginas,paginacatalogo,desobservaciones,vehiculoventa,codpais,codsap,codtipomedioventa,demandaanormalplan,desestrategia,destipodiagramacion,factorrepeticion,flagdiscover,flagestadisticable,flagproductosebe,indcuadre,indpadre,precionormaldolplan,precionormalmnplan,precioofertadolplan,precioofertamnplan,factorcuadre,flagdigitable,nrogrupo,nropaginadigital into #Temp_data2 from fnc_analitico.dwh_dmatrizcampana where codpais != 'PR' and aniocampana >= '" + str(aniocampana1) + "' /*and aniocampana <= '201912'*/ Union select aniocampana,codcanalventa,codcatalogo,codestrategia,codtipooferta,codventa,descatalogo,destipooferta,nropagina,numoferta,precionormalmn,preciooferta,preciovtapropuestomn,codtipocatalogo,desargventa,desexposicion,desladopag,destipocatalogo,desubicacioncatalogo,fotomodelo,fotoproducto,nropaginas,paginacatalogo,desobservaciones,vehiculoventa,codpais,codsap,codtipomedioventa,demandaanormalplan,desestrategia,destipodiagramacion,factorrepeticion,flagdiscover,flagestadisticable,flagproductosebe,indcuadre,indpadre,precionormaldolplan,precionormalmnplan,precioofertadolplan,precioofertamnplan,factorcuadre,flagdigitable,nrogrupo,nropaginadigital from fnc_analitico.dwh_dmatrizcampana where codpais = 'PR' and aniocampana >= '" + str(aniocampana2) + "' /*and aniocampana <= '201912'*/;" )
     cursor.execute(
-         "UNLOAD ($$ SELECT * FROM #Temp_data1; $$) TO 's3://belc-bigdata-landing-dlk-prd/datalake/input/mdm/dmatrizcampana/dmatrizcampana.csv' CREDENTIALS 'aws_access_key_id="+ ACCESS_KEY+ ";aws_secret_access_key="+SECRET_KEY+"' DELIMITER '\t' HEADER ALLOWOVERWRITE PARALLEL OFF ESCAPE ADDQUOTES;")
+         "UNLOAD ($$ SELECT aniocampana,codcanalventa,codcatalogo,codestrategia,codtipooferta,codventa,descatalogo,destipooferta,nropagina,numoferta,precionormalmn,preciooferta,preciovtapropuestomn,codtipocatalogo,desargventa,desexposicion,desladopag,destipocatalogo,desubicacioncatalogo,fotomodelo,fotoproducto,nropaginas,paginacatalogo,desobservaciones,vehiculoventa,codpais,codsap,codtipomedioventa,demandaanormalplan,desestrategia,destipodiagramacion,factorrepeticion,flagdiscover,flagestadisticable,flagproductosebe,indcuadre,indpadre,precionormaldolplan,precionormalmnplan,precioofertadolplan,precioofertamnplan,factorcuadre,flagdigitable,nrogrupo,nropaginadigital FROM #Temp_data2; $$) TO 's3://belc-bigdata-landing-dlk-prd/datalake/input/mdm/dmatrizcampana/dmatrizcampana.csv' CREDENTIALS 'aws_access_key_id="+ACCESS_KEY+";aws_secret_access_key="+SECRET_KEY+"' DELIMITER '\t' HEADER ALLOWOVERWRITE PARALLEL OFF ESCAPE ADDQUOTES;")
 
     client.Object('belc-bigdata-landing-dlk-prd', 'datalake/input/mdm/dmatrizcampana/dmatrizcampana.csv').copy_from(
         CopySource='belc-bigdata-landing-dlk-prd/datalake/input/mdm/dmatrizcampana/dmatrizcampana.csv000')
     client.Object('belc-bigdata-landing-dlk-prd', 'datalake/input/mdm/dmatrizcampana/dmatrizcampana.csv000').delete()
 
-    cursor.execute(
-        "UNLOAD ($$ SELECT * FROM #Temp_data1; $$) TO 's3://belc-bigdata-landing-dlk-qas/forecast-data/Mongo/dmatrizcampana/dmatrizcampana.csv' CREDENTIALS 'aws_access_key_id="+ACCESS_KEY+";aws_secret_access_key="+SECRET_KEY+"' DELIMITER '\t' HEADER ALLOWOVERWRITE PARALLEL OFF ESCAPE ADDQUOTES;")
-    client.Object('belc-bigdata-landing-dlk-qas', 'forecast-data/Mongo/dmatrizcampana/dmatrizcampana.csv').copy_from(
-        CopySource='belc-bigdata-landing-dlk-qas/forecast-data/Mongo/dmatrizcampana/dmatrizcampana.csv000')
-    client.Object('belc-bigdata-landing-dlk-qas', 'forecast-data/Mongo/dmatrizcampana/dmatrizcampana.csv000').delete()
+    #cursor.execute(
+    #    "UNLOAD ($$ SELECT * FROM #Temp_data1; $$) TO 's3://belc-bigdata-landing-dlk-qas/forecast-data/Mongo/dmatrizcampana/dmatrizcampana.csv' CREDENTIALS 'aws_access_key_id=AKIAJK6A3CSH7NDH2TWA;aws_secret_access_key=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' DELIMITER '\t' HEADER ALLOWOVERWRITE PARALLEL OFF ESCAPE ADDQUOTES;")
+    #client.Object('belc-bigdata-landing-dlk-qas', 'forecast-data/Mongo/dmatrizcampana/dmatrizcampana.csv').copy_from(
+    #    CopySource='belc-bigdata-landing-dlk-qas/forecast-data/Mongo/dmatrizcampana/dmatrizcampana.csv000')
+    #client.Object('belc-bigdata-landing-dlk-qas', 'forecast-data/Mongo/dmatrizcampana/dmatrizcampana.csv000').delete()
 
 except Exception as error:
     sys.exit('4: ' + repr(error))

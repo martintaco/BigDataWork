@@ -1,0 +1,27 @@
+Se crea la siguiente tabla
+
+Create table dom_virtual_coach.det_vcresultstableau
+   (codpais varchar(2) NOT NULL,
+   aniocampana varchar(6) NOT NULL,
+   codebelista varchar(10) NOT NULL,
+   desstatus varchar(20),
+   desstatuscorp varchar(20),
+   destipo varchar(15),
+   flagactiva varchar(3),
+   flagactivainicial integer,
+   enviados integer,
+   recibidos integer,
+   abiertos integer,
+   clicks integer,
+   realvtamnneto decimal(15,5),
+   realvtadol decimal(15,5),
+   pedidos integer,
+   PRIMARY key 
+   (codpais,
+   aniocampana,
+   codebelista))
+   DISTSTYLE EVEN                                         	
+   INTERLEAVED SORTKEY (                                  	
+   codpais,
+   aniocampana,
+   codebelista);
