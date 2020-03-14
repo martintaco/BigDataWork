@@ -9,8 +9,8 @@ if sys.version_info[0] < 3:
 else:
     from io import StringIO # Python 3.x
 
-S3_ACCESS_KEY= 'AKIAJK6A3CSH7NDH2TWA'
-S3_SECRET_KEY= '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'
+S3_ACCESS_KEY= ''
+S3_SECRET_KEY= ''
 S3_BUCKET_NAME_LOADED= 'belc-bigdata-landing-dlk-qas'
 S3_PATH_FILES= 'forecast-data/Bigdata/NovoApp/TacticaInd/'
 #S3_BUCKET_NAME_DESTINATION= sys.argv[5]
@@ -51,11 +51,11 @@ for obj in s3.list_objects(Bucket = S3_BUCKET_NAME_LOADED, Prefix = S3_PATH_FILE
         df.fillna('',inplace = True)
 
 #Aquí se hace la conexión con Mongo
-#myclient = pymongo.MongoClient("mongodb+srv://adminJMTM:Martin245522@myclustedbmtm-4wbx0.mongodb.net/admin")
+#myclient = pymongo.MongoClient("")
 #para QAS
-#myclient = pymongo.MongoClient("mongodb+srv://adminBDInfoServiceQAS:FtzDmZ1hLx2yAFsU@bigdatainfoservice-0hd3l.mongodb.net/admin")
+#myclient = pymongo.MongoClient("")
 #Para PRD
-myclient = pymongo.MongoClient("mongodb+srv://adminBDInfoServiceQAS:FtzDmZ1hLx2yAFsU@bigdatainfoservice-0hd3l.mongodb.net/admin")
+myclient = pymongo.MongoClient("")
 mydb = myclient["Tactica"]
 mycol = mydb["Individual"]
 

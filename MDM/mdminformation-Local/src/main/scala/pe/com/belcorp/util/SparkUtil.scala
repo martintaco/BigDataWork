@@ -11,8 +11,8 @@ object SparkUtil {
     //val spark = SparkSession.builder().appName(appName).getOrCreate()
 
     //CONFIG TO REDSHIFT - S3 (LOCAL MODE)
-    spark.sparkContext.hadoopConfiguration.set("fs.s3a.access.key", "AKIA356NXYFCB4CQTP5N")
-    spark.sparkContext.hadoopConfiguration.set("fs.s3a.secret.key", "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")
+    spark.sparkContext.hadoopConfiguration.set("fs.s3a.access.key", "inser_access")
+    spark.sparkContext.hadoopConfiguration.set("fs.s3a.secret.key", "insert_key")
     spark
   }
 }

@@ -57,7 +57,7 @@ def track_statement_progress(host, id):
 #lanza apache livy to emr cluster
 host = host_emr
 data = {"className": "pe.com.belcorp.tactica.main.IntakeProfit", 
-	"args": ["--url", "jdbc:redshift://10.12.6.95:5439/analitico?user=awsbelcorp&password=Belcorp2019", "--schema", "bigdatadatalake_functional_qas","--tempS3Dir","s3://belc-bigdata-functional-dlk-qas/analitico/Redshift", "--location","s3://belc-bigdata-functional-dlk-qas/analitico/GlueDatabase/functional"],
+	"args": ["--url", "", "--schema", "bigdatadatalake_functional_qas","--tempS3Dir","s3://belc-bigdata-functional-dlk-qas/analitico/Redshift", "--location","s3://belc-bigdata-functional-dlk-qas/analitico/GlueDatabase/functional"],
 	"driverMemory": "1g", "driverCores": 1, 'executorCores': 1, 'executorMemory': '1g', 'numExecutors': 1,
 	"file": "s3://belc-bigdata-functional-dlk-qas/analitico/jars/Profit-assembly-0.1.jar"}
 headers = {'Content-Type': 'application/json'}

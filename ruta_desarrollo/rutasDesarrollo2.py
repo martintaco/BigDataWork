@@ -47,10 +47,10 @@ try:
         else:
                 str_day = str(start_time.day)
 
-        client = boto3.resource('s3', aws_access_key_id='AKIAJK6A3CSH7NDH2TWA', aws_secret_access_key='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')
+        client = boto3.resource('s3', aws_access_key_id='', aws_secret_access_key='')
 
         for pais in paises:
-                cursor.execute("UNLOAD ($$ SELECT * FROM dom_digital.det_consultora_sb where codpais = '"+str(pais)+"';$$) TO 's3://belc-bigdata-domain-dlk-prd/dom-digital/rutadesarrollo/historia/"+pais+'/'+pais+'_'+str(start_time.year)+str(start_time.month)+str_day+"' CREDENTIALS 'aws_access_key_id=AKIAJK6A3CSH7NDH2TWA;aws_secret_access_key=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' DELIMITER ',' ALLOWOVERWRITE PARALLEL OFF ESCAPE ADDQUOTES ;")
+                cursor.execute("UNLOAD ($$ SELECT * FROM dom_digital.det_consultora_sb where codpais = '"+str(pais)+"';$$) TO 's3://belc-bigdata-domain-dlk-prd/dom-digital/rutadesarrollo/historia/"+pais+'/'+pais+'_'+str(start_time.year)+str(start_time.month)+str_day+"' CREDENTIALS 'aws_access_key_id=;aws_secret_access_key=' DELIMITER ',' ALLOWOVERWRITE PARALLEL OFF ESCAPE ADDQUOTES ;")
                 client.Object('belc-bigdata-domain-dlk-prd','dom-digital/rutadesarrollo/historia/'+pais+'/'+ pais + '_' + str(start_time.year)+str(start_time.month) + str_day + '.csv').copy_from(CopySource='belc-bigdata-domain-dlk-prd/dom-digital/rutadesarrollo/historia/' + pais + '/' + pais + '_' + str(start_time.year) + str(start_time.month) + str_day + '000')
                 client.Object('belc-bigdata-domain-dlk-prd','dom-digital/rutadesarrollo/historia/'+pais+'/'+ pais + '_' + str(start_time.year) + str(start_time.month) + str_day + '000').delete()
 

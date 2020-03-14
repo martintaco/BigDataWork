@@ -26,7 +26,7 @@ def CalculaAnioCampana(anioCampana, delta):
     return resultado
 
 	#executor python3
-	#python3 /home/belcorpuser/scripts/FVirtual-DProyectada/proceso_dwh_DM_OLD.py 10.12.6.95 5439 analitico awsbelcorp Belcorp2019 AKIAJK6A3CSH7NDH2TWA WenXCHfRDCitIqeXvGtG+2puDFXbzRN33W2Y/zfU FVirtual-DProyectada DProyectada-OLD.sql DemandaProyectada_20190401.csv
+	#python3 
 
 # In[66]:
 

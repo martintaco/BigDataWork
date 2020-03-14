@@ -110,8 +110,8 @@ SELECT * FROM #Tabla5;
 
 unload($$ Select * from #Tabla5  $$)
 to 's3://belc-bigdata-domain-dlk-prd/dom-hana/segmentacion_digital/cierre'
-access_key_id 'AKIAJK6A3CSH7NDH2TWA'
-secret_access_key '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'
+access_key_id ''
+secret_access_key ''
 delimiter '\t'
 NULL AS 'NULL'
 ALLOWOVERWRITE

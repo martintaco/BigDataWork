@@ -57,6 +57,7 @@ for obj in s3.list_objects(Bucket = S3_BUCKET_NAME_LOADED, Prefix = S3_PATH_FILE
         df.fillna('',inplace = True)
 
 #Aquí se hace la conexión con Mongo
+
 try:
   myclient = pymongo.MongoClient(URL_MONGO_CONNECTION)
   mydb = myclient[DB_MONGO]
@@ -80,3 +81,4 @@ except Exception as error:
 #final del proceso
 end_time = datetime.datetime.now()
 print("Fin: ", end_time.isoformat())
+

@@ -21,11 +21,11 @@ print("Inicio : ", start_time.isoformat())
 
 
 ## Conexion a RS ##
-con=psycopg2.connect(host = '10.12.2.26',
+con=psycopg2.connect(host = '',
                      port = '5439',
                      dbname = 'analitico',
-                     user = 'belcorpuser',
-                     password = 'B3lc0rp18$')
+                     user = '',
+                     password = '')
 
 cursor = con.cursor()
 

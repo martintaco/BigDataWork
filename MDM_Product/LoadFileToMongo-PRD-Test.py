@@ -13,11 +13,11 @@ else:
   #sys.exit("Error: Wrong number of arguments.\nUsage: python (thisFile).py dbhost dbport dbname user password filespath filename")
 
 
-S3_ACCESS_KEY= 'AKIAJK6A3CSH7NDH2TWA'
-S3_SECRET_KEY= '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'
+S3_ACCESS_KEY= ''
+S3_SECRET_KEY= ''
 #S3_BUCKET_NAME_LOADED= 'belc-bigdata-landing-dlk-prd'
 #S3_PATH_FILES= 'datalake/input/mdm/dmatrizcampana/'
-URL_MONGO_CONNECTION = "mongodb+srv://adminBDInfoServiceQAS:FtzDmZ1hLx2yAFsU@bigdatainfoservice-0hd3l.mongodb.net/admin"
+URL_MONGO_CONNECTION = ""
 #para QAS
 S3_BUCKET_NAME_LOADED= 'belc-bigdata-landing-dlk-qas'
 S3_PATH_FILES= 'forecast-data/Mongo/dmatrizcampana/'
@@ -63,7 +63,7 @@ for obj in s3.list_objects(Bucket = S3_BUCKET_NAME_LOADED, Prefix = S3_PATH_FILE
         df.fillna('',inplace = True)
 
 #Aquí se hace la conexión con Mongo
-#myclient = pymongo.MongoClient("mongodb+srv://adminJMTM:Martin245522@myclustedbmtm-4wbx0.mongodb.net/admin")
+#myclient = pymongo.MongoClient("")
 myclient = pymongo.MongoClient(URL_MONGO_CONNECTION)
 mydb = myclient[DB_MONGO]
 mycol = mydb[COLLECTION_MONGO]

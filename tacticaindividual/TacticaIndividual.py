@@ -20,7 +20,7 @@ con=psycopg2.connect(host = REDSHIFT_HOST,
 cursor = con.cursor()
 
 #Para ejecutar desde el nifi
-#python3 TacticaIndividual.py 10.12.2.26 5439 analitico usr_app B3Icorp8457
+#python3 TacticaIndividual.py 
 df = pd.read_sql_query("""
 Delete sbx_temp.temp_Data_generate3;
 select codpais, f_calculaaniocampana(codpais,max(aniocampana),-1) as aniocampana_ini,
