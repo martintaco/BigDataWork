@@ -55,7 +55,7 @@ CAMPANIA = sys.argv[2]
 #lanza apache livy to emr cluster
 host = host_emr
 data = {"className": "pe.com.belcorp.tactica.main.IntakeDaily",
-"args": ["--url", "jdbc:redshift://belc-bigdata.c8evymt0o1da.us-east-1.redshift.amazonaws.com:5439/analitico?user=jtaco&password=Belcorp2018", "--schema", "bigdatadatalake_functional_qas","--tempS3Dir","s3n://belc-bigdata-functional-dlk-qas/analitico/Redshift","--country", CODPAIS, "--campania", CAMPANIA, "--location","s3://belc-bigdata-functional-dlk-qas/analitico/GlueDatabase/functional"],
+"args": ["--url", "jdbc:redshift://belc-bigdata.c8evymt0o1da.us-east-1.redshift.amazonaws.com:5439/analitico?user=&password=", "--schema", "bigdatadatalake_functional_qas","--tempS3Dir","s3n://belc-bigdata-functional-dlk-qas/analitico/Redshift","--country", CODPAIS, "--campania", CAMPANIA, "--location","s3://belc-bigdata-functional-dlk-qas/analitico/GlueDatabase/functional"],
 "file": "s3://belc-bigdata-functional-dlk-qas/analitico/jars/tactica-assembly-0.1.jar"}
 headers = {'Content-Type': 'application/json'}
 r = requests.post(host + '/batches', data=json.dumps(data), headers=headers)

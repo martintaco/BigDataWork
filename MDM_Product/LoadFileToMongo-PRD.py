@@ -59,7 +59,7 @@ for obj in s3.list_objects(Bucket = S3_BUCKET_NAME_LOADED, Prefix = S3_PATH_FILE
         df.fillna('',inplace = True)
 
 #Aquí se hace la conexión con Mongo
-#myclient = pymongo.MongoClient("mongodb+srv://adminJMTM:Martin245522@myclustedbmtm-4wbx0.mongodb.net/admin")
+#myclient = pymongo.MongoClient("")
 myclient = pymongo.MongoClient(URL_MONGO_CONNECTION)
 mydb = myclient[DB_MONGO]
 mycol = mydb[COLLECTION_MONGO]

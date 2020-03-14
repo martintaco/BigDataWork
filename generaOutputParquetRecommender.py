@@ -43,7 +43,7 @@ def track_statement_progress(host, id):
     logging.info('Final Statement Status: ' + final_statement_status)
     return message
 
-conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=10.12.12.104;DATABASE=BD_ANALITICO;UID=usrdm;PWD=dm$2Admin4')
+conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=DATABASE=BD_ANALITICO;UID=;PWD=')
 
 cursor = conn.cursor()
 
@@ -101,7 +101,7 @@ try:
         #spark-submit --class pe.com.belcorp.recomender.main.generateParquet s3://belc-bigdata-functional-dlk-qas/analitico/jars/recommender-assembly-0.1.jar -            -path-s3 "s3#://belc-bigdata-apps-shared-qas/recommender" --iteration 1 --country "PE" --campania "201815"         
                 
 
-        #s3 = s3fs.S3FileSystem(anon=False, key='AKIAJK6A3CSH7NDH2TWA', secret='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')
+        #s3 = s3fs.S3FileSystem(anon=False, key='', secret='')
         #myopen = s3.open
         #write('belc-bigdata-apps-shared-qas/recommender/output/', df_output_ofertas_parquet, file_scheme='hive', partition_on = ['codpais', 'aniocampana'],#              open_with=myopen) 
         

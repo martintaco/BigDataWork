@@ -62,6 +62,6 @@ r = requests.post(host + '/batches', data=json.dumps(data), headers=headers)
 id = r.json()['id']
 msg = track_statement_progress(host, id)
 
-#spark-submit --num-executors 4 --executor-cores 4 --executor-memory 5g --class pe.com.belcorp.tactica.main.IntakeDaily /home/hadoop/tactica/target/scala-2.11/tactica-assembly-0.1.jar --url "jdbc:redshift://belc-bigdata-qas.c8evymt0o1da.us-east-1.redshift.amazonaws.com:5439/analitico?user=lgrados&password=Belcorp2018" --schema bigdatadatalake_functional_qas --tempS3Dir "s3n://belc-bigdata-functional-dlk-qas/analitico/Redshift" --country "PE" --campania "201810" --location "s3://belc-bigdata-functional-dlk-qas/analitico/GlueDatabase/functional"
+#spark-submit --num-executors 4 --executor-cores 4 --executor-memory 5g --class pe.com.belcorp.tactica.main.IntakeDaily /home/hadoop/tactica/target/scala-2.11/tactica-assembly-0.1.jar --url "jdbc:redshift://belc-bigdata-qas.c8evymt0o1da.us-east-1.redshift.amazonaws.com:5439/analitico?user=""&password=" --schema bigdatadatalake_functional_qas --tempS3Dir "s3n://belc-bigdata-functional-dlk-qas/analitico/Redshift" --country "PE" --campania "201810" --location "s3://belc-bigdata-functional-dlk-qas/analitico/GlueDatabase/functional"
 end_time = datetime.now()
 print("Fin: ", end_time.isoformat())
